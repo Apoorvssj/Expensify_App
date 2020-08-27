@@ -1,0 +1,19 @@
+html {
+    font-size: 62.5%;  //1rem=16px, 16px*.625 = 10px
+}
+
+body {
+    background-color: $dark-blue;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: $m-size; //now 16px due to conversion above
+}
+
+button {
+    cursor: pointer;
+
+    &:disabled {
+        cursor: default;
+    }
+}
+
+
