@@ -24,6 +24,7 @@ module.exports = {
    devtool: 'cheap-module-eval-source-map',
    devServer: {
     contentBase: path.join(__dirname, 'public'),
-    publicPath: '/public/'
+    publicPath: '/public/',
+    historyApiFallback: true //this tells dev-server that we will be handling routing via client side code and it should return our main "/" page or all routes and let the code decide what to show(tells all pages/404 pages to send back the html file,video 4 folder 9) 
    }
 };

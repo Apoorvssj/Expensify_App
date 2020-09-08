@@ -1,20 +1,13 @@
 import React from 'react';
+import {NavLink} from 'react-router-dom';
 
-//using shothand return syntax explained in OptionModal
-const Header = (props) =>  (
-      <div className="header">
-      <div className="container">
-      <h1 className="header__title">{props.title}</h1>
-      {props.subtitle && <h2 className="header__subtitle">{props.subtitle}</h2>}
-      </div>
-     
-      </div>
-    );
-  
-  
-  //default prop values,these are applied if no props are passed,it is an object ,both functionsal componenets and class comppononets can take default props
-  Header.defaultProps = {
-      title: 'Indecision'
-  };
+const Header = () => (
+    <header>
+    <h1>Expensify</h1>
+    <NavLink to="/" activeClassName="is-active" exact={true}>DashBoard</NavLink>
+    <NavLink to="/create" activeClassName="is-active">Create Expense</NavLink>
+    </header>
+);
 
 export default Header;
+// <NavLink to="/help" activeClassName="is-active">Help</NavLink>
