@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path');//require is the node.js way to import something,path is built-in so no need to install it
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 //reconfigured to return a function in v6 f13
