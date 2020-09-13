@@ -43,12 +43,22 @@ export const startAddExpense = (expenseData = {}) => {
 };
 
 //REMOVE_EXPENSE action generator,will manipluate store
-//default value is not needed for id, id : id using shorthand
+//default value is not needed for id, id : id using shorthand,also destructuring,and setting up defult
 export const removeExpense = ({id} = {}) => ({
     type: 'REMOVE_EXPENSE',
     id 
     
 });
+
+//async action function,will reemove data from database, and dispatch removeExpense()
+export const startRemoveExpense = ({id} = {}) => {
+    return (dispatch) => {
+        //to promise chain in test cases 
+        return database.ref(`expenses/${id}`).remove().then(() => {
+            dispatch(removeExpense({id}));
+        });
+    };
+};
 
 //EDIT_EXPENSE action generator,will manipulate store
 //no need to set defualts,becoz if dont have the id we wont be updating it in the first place
@@ -67,8 +77,8 @@ export const setExpenses = (expenses) => ({
 
 //async action function,will fetch data from database, and dispatch setExpenses()
 export const startSetExpenses = () => {
-    return(dispatch) => {
-        //retuning promise to allow us to do promise chaning and use then() in app.js for startSetExpenses
+    return (dispatch) => {
+        //retuning promise to allow us to do promise chaning and use then() in app.js for startSetExpenses and in expenses.test.js
        return database.ref('expenses')
        .once('value')
        .then((snapshot) => {
@@ -85,3 +95,4 @@ export const startSetExpenses = () => {
        });
     };
 };
+
