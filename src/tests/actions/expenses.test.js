@@ -1,6 +1,8 @@
+//done() lets jest know, to not to consider a test success or failure until done() is callled
+
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {startAddExpense,addExpense, editExpense, removeExpense} from '../../actions/expenses';
+import {startAddExpense,addExpense, editExpense, removeExpense, setExpenses, startSetExpenses} from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 import database from '../../firebase/firebase';
 
@@ -8,6 +10,17 @@ import database from '../../firebase/firebase';
 
 //we will call this over and over again in all of our test cases,here we are creating a configuration,so we can allow the test cases to all create the same mock store
 const createMockStore = configureMockStore([thunk]);
+
+//setting dummy data to firebase , but remeber our mock data is different , in firebase we require our mock data to be set with unique ids as childs to root node
+beforeEach((done) => {
+    const expenseData = {};
+    //destructuring and returning a object with unique id to hold them in database
+    expenses.forEach(({ id, description, note, amount, createdAt }) => {
+        //es6 shorthand
+        expenseData[id] = { description, note, amount, createdAt };
+    });
+    database.ref('expenses').set(expenseData).then(() => done());//using done , to make beforEach wait for this to complete,if not some test cases may run before the data gets saved
+});
 
 test('should setup remove expense action object', () =>{
     const action = removeExpense({ id: '123abc' });
@@ -70,7 +83,7 @@ test('should setup add expense action object with the provided values', () => {
 //     });
 // });
 
-//adding new tests to test async action--------------------------
+//adding 2 new tests to test async addexpense action--------------------------
 //need to import configureMockStore and thunk
 //currently these test cases are writing to the real database, we need to create a separate test databse for them, v5 f15 
 test('should add expense to database and store', (done) => {
@@ -125,4 +138,25 @@ test('should add expense with defaults to database and store', (done) => {
         expect(snapshot.val()).toEqual(expenseDefaults);
         done(); 
     });;
+});
+
+//----------------for set expenses------------------------------
+test('should setup set expense action object with data', ()=> {
+    const action = setExpenses(expenses);
+    expect(action).toEqual({
+        type: 'SET_EXPENSES',
+        expenses
+    });
+});
+
+test('should fetch the expenses from firebase', (done) => {
+    const store = createMockStore({});
+    store.dispatch(startSetExpenses()).then(() => {
+        const actions = store.getActions();
+        expect(actions[0]).toEqual({
+            type: 'SET_EXPENSES',
+            expenses
+        });
+        done();
+    });
 });

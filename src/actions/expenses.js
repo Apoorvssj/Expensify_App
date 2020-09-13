@@ -9,7 +9,7 @@ import database from '../firebase/firebase';
 //now in every other file where we dispatched addExpense, we will change that to startAddExpense , in AddExpensePage.js
 
 
-// ADD_EXPENSE action generator
+// ADD_EXPENSE action generator, //will manipulate redux store
 export const addExpense = (expense) => ({
     type: 'ADD_EXPENSE',
     expense
@@ -17,6 +17,7 @@ export const addExpense = (expense) => ({
 
 //alternate way of setting up defualt values,rather than in function argument as done in old file in playground
 
+//async action, will write ro firebase ,and dispatch addExpense()
 export const startAddExpense = (expenseData = {}) => {
     //retuning a function not object,
     //this function is internally called by redux with dispatch
@@ -41,7 +42,7 @@ export const startAddExpense = (expenseData = {}) => {
     };
 };
 
-//REMOVE_EXPENSE action generator
+//REMOVE_EXPENSE action generator,will manipluate store
 //default value is not needed for id, id : id using shorthand
 export const removeExpense = ({id} = {}) => ({
     type: 'REMOVE_EXPENSE',
@@ -49,10 +50,38 @@ export const removeExpense = ({id} = {}) => ({
     
 });
 
-//EDIT_EXPENSE action generator
+//EDIT_EXPENSE action generator,will manipulate store
 //no need to set defualts,becoz if dont have the id we wont be updating it in the first place
 export const editExpense = (id, updates) => ({
     type: 'EDIT_EXPENSE',
     id,
     updates
 });
+
+//SET_EXPENSES , will manipulate store
+//implicitly returning an object
+export const setExpenses = (expenses) => ({
+    type: 'SET_EXPENSES',
+    expenses
+});
+
+//async action function,will fetch data from database, and dispatch setExpenses()
+export const startSetExpenses = () => {
+    return(dispatch) => {
+        //retuning promise to allow us to do promise chaning and use then() in app.js for startSetExpenses
+       return database.ref('expenses')
+       .once('value')
+       .then((snapshot) => {
+           //snapshot will be in object structure
+           const expenses = []; 
+           //array parsing, becoz we will recieve object from firebase,but we need array for redux store
+           snapshot.forEach((childSnapshot) => {
+               expenses.push({
+                   id: childSnapshot.key,
+                   ...childSnapshot.val()
+               });
+           });
+           dispatch(setExpenses(expenses));
+       });
+    };
+};
