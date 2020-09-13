@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ExpenseForm from './ExpenseForm';
 // import {editExpense, removeExpense} from '../actions/expenses';
-import {editExpense, startRemoveExpense} from '../actions/expenses';
+import {startEditExpense, startRemoveExpense} from '../actions/expenses';
 
 //refactored like AddExpensePage.js in v15 f12
 
@@ -10,7 +10,7 @@ import {editExpense, startRemoveExpense} from '../actions/expenses';
 //props.match.params.id is seen from console //v8 f9
 export class EditExpensePage extends React.Component {
     onSubmit = (expense) => {
-      this.props.editExpense(this.props.expense.id,expense);
+      this.props.startEditExpense(this.props.expense.id,expense);
       this.props.history.push('/');
     };
     onRemove = () => {
@@ -37,7 +37,7 @@ const mapSateToProps = (state,props) => {
 };   
 
 const mapDisptachToProps = (dispatch, props) => ({
-      editExpense: (id, expense) => dispatch(editExpense(id, expense)),
+   startEditExpense: (id, expense) => dispatch(startEditExpense(id, expense)),
       startRemoveExpense: (data) => dispatch(startRemoveExpense(data))
    
   

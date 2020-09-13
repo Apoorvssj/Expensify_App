@@ -68,6 +68,18 @@ export const editExpense = (id, updates) => ({
     updates
 });
 
+//async action function,will update data to database, and dispatch editExpenses()
+export const startEditExpense = (id, updates) => {
+    return (dispatch) => {
+        //retuning promise to allow us to do promise chaning and use then() in expenses.test.js
+        //passing the updates object in update
+        return database.ref(`expenses/${id}`).update(updates)
+        .then(() => {
+            dispatch(editExpense(id,updates));
+        });
+    };
+};
+
 //SET_EXPENSES , will manipulate store
 //implicitly returning an object
 export const setExpenses = (expenses) => ({
@@ -95,4 +107,6 @@ export const startSetExpenses = () => {
        });
     };
 };
+
+
 
