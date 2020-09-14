@@ -36,14 +36,21 @@ import {shallow} from 'enzyme';
 import toJSON from 'enzyme-to-json'; // allows us to see just the json output of snapshot created by enzyme in snapshots folder(makes enzyme work with snapshot testnig functionality)
 */
 import toJSON from 'enzyme-to-json';
-import Header from '../../components/Header';
+import {Header} from '../../components/Header';
 
 test('should render Header correctly', () => {
-    const wrapper = shallow(<Header />);
+    const wrapper = shallow(<Header startLogout={() => {}}/>);
     //find() - like jqauery or document query selector all ,it is going to allow us to select varoius elements inside of our component and make assertions about them
     // expect(wrapper.find('h1').length).toBe(1);
     // expect(wrapper.find('h1').text()).toBe('Expensify');
     
     //expect(toJSON(wrapper)).toMatchSnapshot(); no need to use toJSON since done in config jest file
     expect(toJSON(wrapper)).toMatchSnapshot();
+});
+
+test('should call startLogout on button click', () => {
+  const startLogout = jest.fn();//spy
+  const wrapper = shallow(<Header startLogout={startLogout}/>);
+  wrapper.find('button').simulate('click');
+  expect(startLogout).toHaveBeenCalled();
 });
