@@ -4,11 +4,13 @@ import { createBrowserHistory } from 'history';
 import ExpenseDashboardPage from '../components/ExpenseDashboardPage';
 import AddExpensePage from '../components/AddExpensePage';
 import EditExpensePage from '../components/EditExpensePage';
-import HelpPage from '../components/HelpPage';
 import NotFoundPage from '../components/NotFoundPage';
 import LoginPage from '../components/LoginPage';
 import PrivateRoute from './PrivateRoute';
+import PublicRoute from './PublicRoute';
 //Route will be chnaged to our definded privateroute,to control routing according to user authentication(wether user is logged in ,he can go anywhere in app, but if logged out ,should only see login page and cannot go to any url without logging in)
+
+//for LoginPage route will be changed to PublicRoute, explained in PublicRoute.js
 
 //all the components separated to different componenets , real AppRouter.js
 //So leaving this example in playground folder in renaming it AppRouter_example.js
@@ -29,11 +31,10 @@ import PrivateRoute from './PrivateRoute';
     <Router history={history}>
     <div>
     <Switch>
-    <Route path="/" component={LoginPage} exact={true} />
+    <PublicRoute path="/" component={LoginPage} exact={true} />
     <PrivateRoute path="/dashboard" component={ExpenseDashboardPage} />
     <PrivateRoute path="/create" component={AddExpensePage} />
     <PrivateRoute path="/edit/:id" component={EditExpensePage} />
-    <Route path="/help" component={HelpPage} />
     <Route component={NotFoundPage} />
   </Switch>
     </div>

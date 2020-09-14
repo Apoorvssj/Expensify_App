@@ -11,6 +11,9 @@ import database from '../../firebase/firebase';
 //we will call this over and over again in all of our test cases,here we are creating a configuration,so we can allow the test cases to all create the same mock store
 const createMockStore = configureMockStore([thunk]);
 
+const uid = 'thisismytestuid';
+const defaultAuthState = { auth: { uid } }; //v8 f16
+
 //setting dummy data to firebase , but remeber our mock data is different , in firebase we require our mock data to be set with unique ids as childs to root node
 beforeEach((done) => {
     const expenseData = {};
@@ -19,7 +22,7 @@ beforeEach((done) => {
         //es6 shorthand
         expenseData[id] = { description, note, amount, createdAt };
     });
-    database.ref('expenses').set(expenseData).then(() => done());//using done , to make beforEach wait for this to complete,if not some test cases may run before the data gets saved
+    database.ref(`users/${uid}/expenses`).set(expenseData).then(() => done());//using done , to make beforEach wait for this to complete,if not some test cases may run before the data gets saved
 });
 
 test('should setup remove expense action object', () =>{
@@ -87,7 +90,7 @@ test('should setup add expense action object with the provided values', () => {
 //need to import configureMockStore and thunk
 //currently these test cases are writing to the real database, we need to create a separate test databse for them, v5 f15 
 test('should add expense to database and store', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const expenseData = {
         description: 'Mouse',
         amount: 3000,
@@ -106,7 +109,7 @@ test('should add expense to database and store', (done) => {
         });
         //this id is the one firebase provided
         //retuning promise in promise chaining
-        return database.ref(`expenses/${actions[0].expense.id}`).once('value');
+        return database.ref(`users/${uid}/expenses/${actions[0].expense.id}`).once('value');
        
     }).then((snapshot) => {
         expect(snapshot.val()).toEqual(expenseData);
@@ -116,7 +119,7 @@ test('should add expense to database and store', (done) => {
 });
 
 test('should add expense with defaults to database and store', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const expenseDefaults = {
         description: '',
         amount: 0,
@@ -132,7 +135,7 @@ test('should add expense with defaults to database and store', (done) => {
                 ...expenseDefaults
             }
         });
-        return database.ref(`expenses/${actions[0].expense.id}`).once('value');
+        return database.ref(`users/${uid}/expenses/${actions[0].expense.id}`).once('value');
        
     }).then((snapshot) => {
         expect(snapshot.val()).toEqual(expenseDefaults);
@@ -150,7 +153,7 @@ test('should setup set expense action object with data', ()=> {
 });
 
 test('should fetch the expenses from firebase', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     store.dispatch(startSetExpenses()).then(() => {
         const actions = store.getActions();
         expect(actions[0]).toEqual({
@@ -163,7 +166,7 @@ test('should fetch the expenses from firebase', (done) => {
 
 //------------------------async test case for startRemoveExpense
 test('should remove expense from firebase', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const id = expenses[2].id;
     store.dispatch(startRemoveExpense({ id })).then(() => {
         const actions = store.getActions();
@@ -172,7 +175,7 @@ test('should remove expense from firebase', (done) => {
             id
         });
         //returning promise to pass it to next then(),//promise chaning
-        return database.ref(`expenses/${id}`).once('value');
+        return database.ref(`users/${uid}/expenses/${id}`).once('value');
     }).then((snapshot) => {
         expect(snapshot.val()).toBeFalsy(); //snapshot.val will return null, cuz that expense was deleted
         done();
@@ -181,7 +184,7 @@ test('should remove expense from firebase', (done) => {
 
 //------------------------async test case for startEditExpense
 test('should edit expense from firebase', (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const id = expenses[0].id;
     const updates = {note: 'New note value'};
     store.dispatch(startEditExpense(id,updates)).then(() => {
@@ -192,7 +195,7 @@ test('should edit expense from firebase', (done) => {
             updates
         });
         //returning promise to pass it to next then(),//promise chaning
-        return database.ref(`expenses/${id}`).once('value');//passing the updates object
+        return database.ref(`users/${uid}/expenses/${id}`).once('value');//passing the updates object
     }).then((snapshot) => {
         expect(snapshot.val().note).toEqual(updates.note);
         done();
