@@ -2,7 +2,9 @@
 //see firebase-2.js in playground for writing with push()
 //see firebase-3.js for reading from firebase after using push()
 
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
