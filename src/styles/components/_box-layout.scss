@@ -1,0 +1,24 @@
+.box-layout {
+    background: url('/public/images/bg.jpg'); // remeber this code runs on browser , and browser only has access to public folder
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    // background-position: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.box-layout__box{
+    background: fade-out($color: white, $amount: .15);
+    border-radius: 3px;
+    padding: $l-size $m-size;
+    text-align: center;
+    width: 25rem;
+}
+
+.box-layout__title {
+    margin: 0 0 $m-size 0;
+    line-height: 1;
+}
+

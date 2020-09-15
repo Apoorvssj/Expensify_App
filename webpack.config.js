@@ -18,7 +18,7 @@ module.exports = (env) => {
     const isProduction = env === 'production';
     console.log('env', env); // env flag in package.jon in build:prop script
     return {
-        entry: './src/app.js',
+        entry: ['babel-polyfill', './src/app.js'],
         output: {
             path: path.join(__dirname,'public', 'dist'),
             filename: 'bundle.js'
@@ -37,6 +37,15 @@ module.exports = (env) => {
                     'sass-loader'
                 ]
      
+            },{
+                test:/\.(svg|png|jpg|gif)$/,
+                use: {
+                    loader: "file-loader",
+                    options: {
+                         name: "[name].[ext]", //will create copy of file from src folder to dist folder with name and content hash and extension
+                        outputPath: "images"
+                    }
+                }
             }]
         },
         plugins: [
